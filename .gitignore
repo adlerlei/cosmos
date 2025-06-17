@@ -1,0 +1,7 @@
+.qodo
+dist/
+.DS_Store
+DS_Store/
+.env
+.trae
+_internal_cosmos_code.md
