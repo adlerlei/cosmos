@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmos Framework - API 文檔</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7fafc; /* Tailwind gray-100 */
+            color: #2d3748; /* Tailwind gray-800 */
+        }
+        .container {
+            max-width: 1200px;
+        }
+        .header-bg {
+            background-color: #3b82f6; /* Tailwind blue-500 */
+            background-image: linear-gradient(to right, #6366f1, #3b82f6); /* Tailwind indigo-500 to blue-500 */
+        }
+        .nav-link {
+            @apply text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors duration-200;
+        }
+        .section-heading {
+            @apply text-3xl font-extrabold text-gray-900 sm:text-4xl;
+        }
+        .api-category-title {
+            @apply text-2xl font-bold text-indigo-700 mb-6;
+        }
+        .api-item-heading {
+            @apply text-xl font-semibold text-gray-800 mt-8 mb-4;
+        }
+        .code-block {
+            @apply bg-gray-800 text-white p-4 rounded-lg overflow-x-auto text-sm;
+        }
+        .param-table th, .param-table td {
+            @apply px-4 py-2 border border-gray-200;
+        }
+        .param-table th {
+            @apply bg-gray-100 text-left font-medium text-gray-700;
+        }
+        .docs-sidebar {
+            width: 280px; /* Fixed width for sidebar */
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            @apply bg-white p-6 shadow-md rounded-lg;
+        }
+        .docs-content {
+            flex-grow: 1;
+            min-width: 0; /* Allows content to shrink */
+        }
+        .sidebar-nav a {
+            @apply block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md transition-colors duration-200;
+        }
+        .sidebar-nav ul {
+            @apply list-none p-0 m-0;
+        }
+        .sidebar-nav ul ul {
+            @apply pl-4 mt-1;
+        }
+        .sidebar-nav > ul > li > a {
+            @apply font-semibold text-indigo-700 mt-4 mb-2;
+        }
+        .sidebar-nav ul li a {
+            font-size: 0.95rem;
+        }
+        .sidebar-nav ul li ul li a {
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <!-- 導航欄 -->
+    <nav class="header-bg shadow-lg">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="index.html" class="text-white text-2xl font-bold">Cosmos</a>
+            <div>
+                <a href="index.html#overview" class="nav-link">概覽</a>
+                <a href="api-docs.html" class="nav-link" target="_blank">API 文檔</a>
+                <a href="index.html#examples" class="nav-link">範例</a>
+                <a href="https://github.com/cosmos-framework/cosmos" target="_blank" class="nav-link">GitHub</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8 flex flex-col lg:flex-row gap-8">
+        <!-- 側邊導航欄 -->
+        <aside class="docs-sidebar">
+            <h3 class="text-xl font-bold text-gray-900 mb-4">API 目錄</h3>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="#ui-components">UI 元件積木</a>
+                        <ul>
+                            <li><a href="#title">.title()</a></li>
+                            <li><a href="#text">.text()</a></li>
+                            <li><a href="#input">.input()</a></li>
+                            <li><a href="#button">.button()</a></li>
+                            <li><a href="#image">.image()</a></li>
+                            <li><a href="#select">.select()</a></li>
+                            <li><a href="#checkbox">.checkbox()</a></li>
+                            <li><a href="#slider">.slider()</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#style-layout">樣式與佈局積木</a>
+                        <ul>
+                            <li><a href="#layout">.layout()</a></li>
+                            <li><a href="#color">.color()</a></li>
+                            <li><a href="#animate">.animate()</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#form-validation">表單驗證積木</a>
+                        <ul>
+                            <li><a href="#required">.required()</a></li>
+                            <li><a href="#email">.email()</a></li>
+                            <li><a href="#minlength">.minLength()</a></li>
+                            <li><a href="#maxlength">.maxLength()</a></li>
+                            <li><a href="#numeric">.numeric()</a></li>
+                            <li><a href="#pattern">.pattern()</a></li>
+                            <li><a href="#onvalid">.onValid()</a></li>
+                            <li><a href="#oninvalid">.onInvalid()</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#event-handling">事件處理積木</a>
+                        <ul>
+                            <li><a href="#onclick">.onClick() / .buttonClick()</a></li>
+                            <li><a href="#onchange">.onChange()</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#conditional-logic">條件邏輯積木</a>
+                        <ul>
+                            <li><a href="#when">.when()</a></li>
+                            <li><a href="#and">.and()</a></li>
+                            <li><a href="#or">.or()</a></li>
+                            <li><a href="#then">.then()</a></li>
+                            <li><a href="#else">.else()</a></li>
+                            <li><a href="#otherwise">.otherwise()</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#api-communication">API 通訊積木</a>
+                        <ul>
+                            <li><a href="#get">.GET()</a></li>
+                            <li><a href="#post">.POST()</a></li>
+                            <li><a href="#put">.PUT()</a></li>
+                            <li><a href="#delete">.DELETE()</a></li>
+                            <li><a href="#onsuccess">.onSuccess()</a></li>
+                            <li><a href="#onerror">.onError()</a></li>
+                            <li><a href="#onloading">.onLoading()</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- API 文檔主內容 -->
+        <main class="docs-content bg-white p-8 rounded-lg shadow-lg">
+            <h2 class="section-heading mb-8">📖 API 文檔</h2>
+            <p class="text-lg text-gray-700 mb-8">
+                Cosmos 框架的所有「積木」功能詳解。
+            </p>
+
+            <!-- UI 元件積木 -->
+            <div id="ui-components" class="mb-16">
+                <h3 class="api-category-title">1. UI 元件積木</h3>
+
+                <!-- .title() -->
+                <div id="title" class="bg-gray-50 p-6 rounded-lg shadow mb-6">
+                    <h4 class="api-item-heading">.title()</h4>
+                    <p class="text-gray-700 mb-2">設置應用程式的主標題。</p>
+                    <p class="font-bold text-gray-800 mb-2">語法:</p>
+                    <pre class="code-block">.title('標題文字')</pre>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">參數規則:</p>
+                    <table class="param-table w-full text-left table-auto border-collapse border border-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">參數</th>
+                                <th class="w-1/4">類型</th>
+                                <th class="w-1/2">說明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>標題文字</code></td>
+                                <td>String</td>
+                                <td>必要參數，顯示在頁面上的標題內容。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">使用範例:</p>
+                    <pre class="code-block">new Cosmos.App()
+    .title('聯絡我們')
+    .start();</pre>
+                </div>
+
+                <!-- .text() -->
+                <div id="text" class="bg-gray-50 p-6 rounded-lg shadow mb-6">
+                    <h4 class="api-item-heading">.text()</h4>
+                    <p class="text-gray-700 mb-2">顯示一段靜態文字。</p>
+                    <p class="font-bold text-gray-800 mb-2">語法:</p>
+                    <pre class="code-block">.text('內容')</pre>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">參數規則:</p>
+                    <table class="param-table w-full text-left table-auto border-collapse border border-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">參數</th>
+                                <th class="w-1/4">類型</th>
+                                <th class="w-1/2">說明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>內容</code></td>
+                                <td>String</td>
+                                <td>必要參數，要顯示的文字內容。支援 HTML 標籤。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">使用範例:</p>
+                    <pre class="code-block">new Cosmos.App()
+    .text('歡迎使用 Cosmos 框架！')
+    .text('支援 HTML: &lt;strong&gt;粗體文字&lt;/strong&gt;。')
+    .start();</pre>
+                </div>
+
+                <!-- .input() -->
+                <div id="input" class="bg-gray-50 p-6 rounded-lg shadow mb-6">
+                    <h4 class="api-item-heading">.input()</h4>
+                    <p class="text-gray-700 mb-2">建立一個文字輸入框。</p>
+                    <p class="font-bold text-gray-800 mb-2">語法:</p>
+                    <pre class="code-block">.input('提示文字')</pre>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">參數規則:</p>
+                    <table class="param-table w-full text-left table-auto border-collapse border border-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">參數</th>
+                                <th class="w-1/4">類型</th>
+                                <th class="w-1/2">說明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>提示文字</code></td>
+                                <td>String</td>
+                                <td>必要參數，輸入框的 placeholder 文字。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">使用範例:</p>
+                    <pre class="code-block">new Cosmos.App()
+    .input('您的姓名')
+    .input('您的電子郵件')
+    .start();</pre>
+                </div>
+
+                <!-- .button() -->
+                <div id="button" class="bg-gray-50 p-6 rounded-lg shadow mb-6">
+                    <h4 class="api-item-heading">.button()</h4>
+                    <p class="text-gray-700 mb-2">建立一個可點擊的按鈕。</p>
+                    <p class="font-bold text-gray-800 mb-2">語法:</p>
+                    <pre class="code-block">.button('按鈕文字')</pre>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">參數規則:</p>
+                    <table class="param-table w-full text-left table-auto border-collapse border border-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">參數</th>
+                                <th class="w-1/4">類型</th>
+                                <th class="w-1/2">說明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>按鈕文字</code></td>
+                                <td>String</td>
+                                <td>必要參數，顯示在按鈕上的文字。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">使用範例:</p>
+                    <pre class="code-block">new Cosmos.App()
+    .button('提交表單')
+    .onClick('表單已提交！')
+    .start();</pre>
+                </div>
+
+                <!-- .image() -->
+                <div id="image" class="bg-gray-50 p-6 rounded-lg shadow mb-6">
+                    <h4 class="api-item-heading">.image()</h4>
+                    <p class="text-gray-700 mb-2">顯示一張圖片，支援靈活尺寸設定與響應式特性。</p>
+                    <p class="font-bold text-gray-800 mb-2">語法:</p>
+                    <pre class="code-block">.image('網址/路徑', 寬度?, 高度?, 'alt文字?')</pre>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">參數規則:</p>
+                    <table class="param-table w-full text-left table-auto border-collapse border border-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">參數</th>
+                                <th class="w-1/4">類型</th>
+                                <th class="w-1/2">說明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>網址/路徑</code></td>
+                                <td>String</td>
+                                <td>必要參數，圖片的 URL 或本地路徑。</td>
+                            </tr>
+                            <tr>
+                                <td><code>寬度</code></td>
+                                <td>Number | undefined</td>
+                                <td>可選參數，圖片的顯示寬度（像素）。若提供，則高度也應提供。</td>
+                            </tr>
+                            <tr>
+                                <td><code>高度</code></td>
+                                <td>Number | 'auto' | undefined</td>
+                                <td>可選參數，圖片的顯示高度（像素）或 'auto' 實現自適應高度。</td>
+                            </tr>
+                            <tr>
+                                <td><code>alt文字</code></td>
+                                <td>String | undefined</td>
+                                <td>可選參數，用於無障礙訪問的替代文字。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">特殊功能:</p>
+                    <ul class="list-disc list-inside text-gray-700 mb-4">
+                        <li><strong>自適應支援：</strong>可使用 <code>'auto'</code> 作為高度參數，使圖片高度自適應寬度。</li>
+                        <li><strong>參數邏輯：</strong>如果使用 <code>寬度</code>，就必須有 <code>高度</code> 參數（可以是數字或 <code>'auto'</code>）。</li>
+                    </ul>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">響應式特性:</p>
+                    <ul class="list-disc list-inside text-gray-700 mb-4">
+                        <li>所有圖片都具備 <code>max-width: 100%</code> 響應式保護。</li>
+                        <li>固定尺寸圖片在小螢幕上會自動縮放，不會被切除。</li>
+                        <li>使用 <code>object-fit: contain</code> 保持圖片比例。</li>
+                        <li>原始尺寸圖片完全響應式適應容器寬度。</li>
+                    </ul>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">使用範例:</p>
+                    <pre class="code-block">// 原始尺寸（完全響應式）
+new Cosmos.App().image('https://placehold.co/600x200/4285f4/ffffff?text=Cosmos+Demo').start();
+
+// 固定尺寸
+new Cosmos.App().image('https://placehold.co/400x300/4285f4/ffffff?text=Fixed+Size', 400, 300, '固定尺寸圖片').start();
+
+// 寬度固定，高度自適應
+new Cosmos.App().image('https://placehold.co/400xauto/4285f4/ffffff?text=Auto+Height', 400, 'auto', '寬高自適應圖片').start();</pre>
+                </div>
+
+                <!-- .select() -->
+                <div id="select" class="bg-gray-50 p-6 rounded-lg shadow mb-6">
+                    <h4 class="api-item-heading">.select()</h4>
+                    <p class="text-gray-700 mb-2">建立一個下拉式選單。</p>
+                    <p class="font-bold text-gray-800 mb-2">語法:</p>
+                    <pre class="code-block">.select(['選項A', '選項B', ...])</pre>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">參數規則:</p>
+                    <table class="param-table w-full text-left table-auto border-collapse border border-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">參數</th>
+                                <th class="w-1/4">類型</th>
+                                <th class="w-1/2">說明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>選項陣列</code></td>
+                                <td>Array&lt;String&gt;</td>
+                                <td>必要參數，包含所有選項文字的陣列。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">使用範例:</p>
+                    <pre class="code-block">new Cosmos.App()
+    .select(['技術支援', '業務合作', '其他'])
+    .start();</pre>
+                </div>
+
+                <!-- .checkbox() -->
+                <div id="checkbox" class="bg-gray-50 p-6 rounded-lg shadow mb-6">
+                    <h4 class="api-item-heading">.checkbox()</h4>
+                    <p class="text-gray-700 mb-2">建立一個勾選框。</p>
+                    <p class="font-bold text-gray-800 mb-2">語法:</p>
+                    <pre class="code-block">.checkbox('標籤文字')</pre>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">參數規則:</p>
+                    <table class="param-table w-full text-left table-auto border-collapse border border-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">參數</th>
+                                <th class="w-1/4">類型</th>
+                                <th class="w-1/2">說明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>標籤文字</code></td>
+                                <td>String</td>
+                                <td>必要參數，勾選框旁邊顯示的標籤文字。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">使用範例:</p>
+                    <pre class="code-block">new Cosmos.App()
+    .checkbox('訂閱我們的電子報')
+    .start();</pre>
+                </div>
+
+                <!-- .slider() -->
+                <div id="slider" class="bg-gray-50 p-6 rounded-lg shadow mb-6">
+                    <h4 class="api-item-heading">.slider()</h4>
+                    <p class="text-gray-700 mb-2">建立一個可拖動的滑桿。</p>
+                    <p class="font-bold text-gray-800 mb-2">語法:</p>
+                    <pre class="code-block">.slider(最小值, 最大值, 預設值?)</pre>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">參數規則:</p>
+                    <table class="param-table w-full text-left table-auto border-collapse border border-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">參數</th>
+                                <th class="w-1/4">類型</th>
+                                <th class="w-1/2">說明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>最小值</code></td>
+                                <td>Number</td>
+                                <td>必要參數，滑桿的最小值。</td>
+                            </tr>
+                            <tr>
+                                <td><code>最大值</code></td>
+                                <td>Number</td>
+                                <td>必要參數，滑桿的最大值。</td>
+                            </tr>
+                            <tr>
+                                <td><code>預設值</code></td>
+                                <td>Number | undefined</td>
+                                <td>可選參數，滑桿的初始值。若未提供，則使用最小值。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">使用範例:</p>
+                    <pre class="code-block">new Cosmos.App()
+    .slider(0, 100, 50) // 建立一個從 0 到 100，預設值為 50 的滑桿
+    .start();</pre>
+                </div>
+            </div>
+
+            <!-- 樣式與佈局積木 -->
+            <div id="style-layout" class="mb-16">
+                <h3 class="api-category-title">2. 樣式與佈局積木</h3>
+
+                <!-- .layout() -->
+                <div id="layout" class="bg-gray-50 p-6 rounded-lg shadow mb-6">
+                    <h4 class="api-item-heading">.layout()</h4>
+                    <p class="text-gray-700 mb-2">改變後續元素的排列方式（水平或垂直）。</p>
+                    <p class="font-bold text-gray-800 mb-2">語法:</p>
+                    <pre class="code-block">.layout('row' | 'col')</pre>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">參數規則:</p>
+                    <table class="param-table w-full text-left table-auto border-collapse border border-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">參數</th>
+                                <th class="w-1/4">類型</th>
+                                <th class="w-1/2">說明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>方向</code></td>
+                                <td>String</td>
+                                <td>必要參數，可以是 <code>'row'</code> (水平排列) 或 <code>'col'</code> (垂直排列)。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">使用範例:</p>
+                    <pre class="code-block">new Cosmos.App()
+    .layout('row')
+    .button('按鈕 1')
+    .button('按鈕 2') // 按鈕將水平並排
+    .layout('col')
+    .text('文字 1')
+    .text('文字 2') // 文字將垂直排列
+    .start();</pre>
+                </div>
+
+                <!-- .color() -->
+                <div id="color" class="bg-gray-50 p-6 rounded-lg shadow mb-6">
+                    <h4 class="api-item-heading">.color()</h4>
+                    <p class="text-gray-700 mb-2">改變後續元素的預設顏色。</p>
+                    <p class="font-bold text-gray-800 mb-2">語法:</p>
+                    <pre class="code-block">.color('顏色名')</pre>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">參數規則:</p>
+                    <table class="param-table w-full text-left table-auto border-collapse border border-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">參數</th>
+                                <th class="w-1/4">類型</th>
+                                <th class="w-1/2">說明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>顏色名</code></td>
+                                <td>String</td>
+                                <td>必要參數，預設支援 <code>'blue'</code>, <code>'green'</code>, <code>'red'</code>, <code>'purple'</code>, <code>'orange'</code>, <code>'pink'</code>。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">使用範例:</p>
+                    <pre class="code-block">new Cosmos.App()
+    .color('red')
+    .button('紅色按鈕')
+    .color('blue')
+    .text('藍色文字')
+    .start();</pre>
+                </div>
+
+                <!-- .animate() -->
+                <div id="animate" class="bg-gray-50 p-6 rounded-lg shadow mb-6">
+                    <h4 class="api-item-heading">.animate()</h4>
+                    <p class="text-gray-700 mb-2">為前一個被建立的元素加上動畫效果。</p>
+                    <p class="font-bold text-gray-800 mb-2">語法:</p>
+                    <pre class="code-block">.animate('動畫名')</pre>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">參數規則:</p>
+                    <table class="param-table w-full text-left table-auto border-collapse border border-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">參數</th>
+                                <th class="w-1/4">類型</th>
+                                <th class="w-1/2">說明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>動畫名</code></td>
+                                <td>String</td>
+                                <td>必要參數，支援 <code>'fadeIn'</code>, <code>'slideIn'</code>, <code>'bounce'</code>, <code>'pulse'</code>。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">使用範例:</p>
+                    <pre class="code-block">new Cosmos.App()
+    .button('點我彈跳').animate('bounce')
+    .text('漸入文字').animate('fadeIn')
+    .start();</pre>
+                </div>
+            </div>
+
+            <!-- 表單驗證積木 -->
+            <div id="form-validation" class="mb-16">
+                <h3 class="api-category-title">3. 表單驗證積木</h3>
+                <p class="text-gray-700 mb-6">
+                    為 <code>input</code> 或 <code>select</code> 元素添加多種驗證規則，會在使用者輸入時即時顯示錯誤訊息。
+                </p>
+
+                <!-- .required() -->
+                <div id="required" class="bg-gray-50 p-6 rounded-lg shadow mb-6">
+                    <h4 class="api-item-heading">.required()</h4>
+                    <p class="text-gray-700 mb-2">設定為必填欄位。</p>
+                    <p class="font-bold text-gray-800 mb-2">語法:</p>
+                    <pre class="code-block">.required('錯誤訊息')</pre>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">參數規則:</p>
+                    <table class="param-table w-full text-left table-auto border-collapse border border-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">參數</th>
+                                <th class="w-1/4">類型</th>
+                                <th class="w-1/2">說明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>錯誤訊息</code></td>
+                                <td>String</td>
+                                <td>必要參數，當欄位為空時顯示的錯誤提示。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">使用範例:</p>
+                    <pre class="code-block">new Cosmos.App()
+    .input('用戶名').required('用戶名為必填')
+    .start();</pre>
+                </div>
+
+                <!-- .email() -->
+                <div id="email" class="bg-gray-50 p-6 rounded-lg shadow mb-6">
+                    <h4 class="api-item-heading">.email()</h4>
+                    <p class="text-gray-700 mb-2">驗證 Email 格式。</p>
+                    <p class="font-bold text-gray-800 mb-2">語法:</p>
+                    <pre class="code-block">.email('錯誤訊息')</pre>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">參數規則:</p>
+                    <table class="param-table w-full text-left table-auto border-collapse border border-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">參數</th>
+                                <th class="w-1/4">類型</th>
+                                <th class="w-1/2">說明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>錯誤訊息</code></td>
+                                <td>String</td>
+                                <td>必要參數，當 Email 格式不正確時顯示的錯誤提示。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">使用範例:</p>
+                    <pre class="code-block">new Cosmos.App()
+    .input('Email').email('請輸入有效的 Email 地址')
+    .start();</pre>
+                </div>
+
+                <!-- .minLength() -->
+                <div id="minlength" class="bg-gray-50 p-6 rounded-lg shadow mb-6">
+                    <h4 class="api-item-heading">.minLength()</h4>
+                    <p class="text-gray-700 mb-2">驗證最小長度。</p>
+                    <p class="font-bold text-gray-800 mb-2">語法:</p>
+                    <pre class="code-block">.minLength(長度, '錯誤訊息')</pre>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">參數規則:</p>
+                    <table class="param-table w-full text-left table-auto border-collapse border border-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">參數</th>
+                                <th class="w-1/4">類型</th>
+                                <th class="w-1/2">說明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>長度</code></td>
+                                <td>Number</td>
+                                <td>必要參數，最小允許的字元數。</td>
+                            </tr>
+                            <tr>
+                                <td><code>錯誤訊息</code></td>
+                                <td>String</td>
+                                <td>必要參數，當長度不足時顯示的錯誤提示。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">使用範例:</p>
+                    <pre class="code-block">new Cosmos.App()
+    .input('密碼').minLength(6, '密碼至少需要 6 個字元')
+    .start();</pre>
+                </div>
+
+                <!-- .maxLength() -->
+                <div id="maxlength" class="bg-gray-50 p-6 rounded-lg shadow mb-6">
+                    <h4 class="api-item-heading">.maxLength()</h4>
+                    <p class="text-gray-700 mb-2">驗證最大長度。</p>
+                    <p class="font-bold text-gray-800 mb-2">語法:</p>
+                    <pre class="code-block">.maxLength(長度, '錯誤訊息')</pre>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">參數規則:</p>
+                    <table class="param-table w-full text-left table-auto border-collapse border border-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">參數</th>
+                                <th class="w-1/4">類型</th>
+                                <th class="w-1/2">說明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>長度</code></td>
+                                <td>Number</td>
+                                <td>必要參數，最大允許的字元數。</td>
+                            </tr>
+                            <tr>
+                                <td><code>錯誤訊息</code></td>
+                                <td>String</td>
+                                <td>必要參數，當長度超過時顯示的錯誤提示。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">使用範例:</p>
+                    <pre class="code-block">new Cosmos.App()
+    .input('簡介').maxLength(100, '簡介不能超過 100 個字元')
+    .start();</pre>
+                </div>
+
+                <!-- .numeric() -->
+                <div id="numeric" class="bg-gray-50 p-6 rounded-lg shadow mb-6">
+                    <h4 class="api-item-heading">.numeric()</h4>
+                    <p class="text-gray-700 mb-2">驗證是否為數字格式。</p>
+                    <p class="font-bold text-gray-800 mb-2">語法:</p>
+                    <pre class="code-block">.numeric('錯誤訊息')</pre>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">參數規則:</p>
+                    <table class="param-table w-full text-left table-auto border-collapse border border-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">參數</th>
+                                <th class="w-1/4">類型</th>
+                                <th class="w-1/2">說明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>錯誤訊息</code></td>
+                                <td>String</td>
+                                <td>必要參數，當輸入不是數字時顯示的錯誤提示。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">使用範例:</p>
+                    <pre class="code-block">new Cosmos.App()
+    .input('年齡').numeric('請輸入數字')
+    .start();</pre>
+                </div>
+
+                <!-- .pattern() -->
+                <div id="pattern" class="bg-gray-50 p-6 rounded-lg shadow mb-6">
+                    <h4 class="api-item-heading">.pattern()</h4>
+                    <p class="text-gray-700 mb-2">使用正則表達式自訂格式驗證。</p>
+                    <p class="font-bold text-gray-800 mb-2">語法:</p>
+                    <pre class="code-block">.pattern(正則表達式, '錯誤訊息')</pre>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">參數規則:</p>
+                    <table class="param-table w-full text-left table-auto border-collapse border border-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">參數</th>
+                                <th class="w-1/4">類型</th>
+                                <th class="w-1/2">說明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>正則表達式</code></td>
+                                <td>RegExp</td>
+                                <td>必要參數，用於驗證輸入格式的 RegExp 物件。</td>
+                            </tr>
+                            <tr>
+                                <td><code>錯誤訊息</code></td>
+                                <td>String</td>
+                                <td>必要參數，當格式不符合時顯示的錯誤提示。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">使用範例:</p>
+                    <pre class="code-block">new Cosmos.App()
+    .input('郵政編碼').pattern(/^\d{5}$/, '請輸入 5 位數字的郵政編碼')
+    .start();</pre>
+                </div>
+
+                <!-- .onValid() -->
+                <div id="onvalid" class="bg-gray-50 p-6 rounded-lg shadow mb-6">
+                    <h4 class="api-item-heading">.onValid()</h4>
+                    <p class="text-gray-700 mb-2">所有驗證通過後，點擊按鈕時觸發的動作。</p>
+                    <p class="font-bold text-gray-800 mb-2">語法:</p>
+                    <pre class="code-block">.onValid(action)</pre>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">參數規則:</p>
+                    <table class="param-table w-full text-left table-auto border-collapse border border-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">參數</th>
+                                <th class="w-1/4">類型</th>
+                                <th class="w-1/2">說明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>action</code></td>
+                                <td>String | Function</td>
+                                <td>必要參數，可以是訊息字串或接收表單值的函式 <code>function(values){...}</code>。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">使用範例:</p>
+                    <pre class="code-block">new Cosmos.App()
+    .input('用戶名').required('用戶名為必填')
+    .button('註冊')
+    .onValid('太棒了，所有資料都正確！')
+    .start();</pre>
+                </div>
+
+                <!-- .onInvalid() -->
+                <div id="oninvalid" class="bg-gray-50 p-6 rounded-lg shadow mb-6">
+                    <h4 class="api-item-heading">.onInvalid()</h4>
+                    <p class="text-gray-700 mb-2">任何驗證失敗後，點擊按鈕時觸發的動作。</p>
+                    <p class="font-bold text-gray-800 mb-2">語法:</p>
+                    <pre class="code-block">.onInvalid(action)</pre>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">參數規則:</p>
+                    <table class="param-table w-full text-left table-auto border-collapse border border-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">參數</th>
+                                <th class="w-1/4">類型</th>
+                                <th class="w-1/2">說明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>action</code></td>
+                                <td>String | Function</td>
+                                <td>必要參數，可以是訊息字串或接收表單值的函式 <code>function(values){...}</code>。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">使用範例:</p>
+                    <pre class="code-block">new Cosmos.App()
+    .input('用戶名').required('用戶名為必填')
+    .button('註冊')
+    .onInvalid('請修正表單中紅色的錯誤提示')
+    .start();</pre>
+                </div>
+            </div>
+
+            <!-- 事件處理積木 -->
+            <div id="event-handling" class="mb-16">
+                <h3 class="api-category-title">4. 事件處理積木</h3>
+                <p class="text-gray-700 mb-6">
+                    定義當特定事件發生時要執行的動作。
+                </p>
+
+                <!-- .onClick() / .buttonClick() -->
+                <div id="onclick" class="bg-gray-50 p-6 rounded-lg shadow mb-6">
+                    <h4 class="api-item-heading">.onClick() / .buttonClick()</h4>
+                    <p class="text-gray-700 mb-2">綁定在最後一個按鈕上，在點擊時觸發。</p>
+                    <p class="font-bold text-gray-800 mb-2">語法:</p>
+                    <pre class="code-block">.onClick(action)</pre>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">參數規則:</p>
+                    <table class="param-table w-full text-left table-auto border-collapse border border-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">參數</th>
+                                <th class="w-1/4">類型</th>
+                                <th class="w-1/2">說明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>action</code></td>
+                                <td>String | Function</td>
+                                <td>必要參數，可以是訊息字串或接收所有表單值的函式 <code>function(values){...}</code>。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">使用範例:</p>
+                    <pre class="code-block">new Cosmos.App()
+    .input('您的名字')
+    .button('打招呼')
+    .onClick(function(values) {
+        alert(`你好, ${values['您的名字']}!`);
+    })
+    .start();</pre>
+                </div>
+
+                <!-- .onChange() -->
+                <div id="onchange" class="bg-gray-50 p-6 rounded-lg shadow mb-6">
+                    <h4 class="api-item-heading">.onChange()</h4>
+                    <p class="text-gray-700 mb-2">綁定在最後一個輸入元件上 (<code>input</code>, <code>select</code>, <code>checkbox</code>, <code>slider</code>)，在值變更時觸發。</p>
+                    <p class="font-bold text-gray-800 mb-2">語法:</p>
+                    <pre class="code-block">.onChange(action)</pre>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">參數規則:</p>
+                    <table class="param-table w-full text-left table-auto border-collapse border border-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">參數</th>
+                                <th class="w-1/4">類型</th>
+                                <th class="w-1/2">說明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>action</code></td>
+                                <td>String | Function</td>
+                                <td>必要參數，可以是訊息字串或接收該元件新值的函式 <code>function(value){...}</code>。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">使用範例:</p>
+                    <pre class="code-block">new Cosmos.App()
+    .input('您的名字').onChange(function(name) {
+        console.log(`名字變成了: ${name}`);
+    })
+    .start();</pre>
+                </div>
+            </div>
+
+            <!-- 條件邏輯積木 -->
+            <div id="conditional-logic" class="mb-16">
+                <h3 class="api-category-title">5. 條件邏輯積木</h3>
+                <p class="text-gray-700 mb-6">
+                    取代傳統的 <code>if/else</code>，讓邏輯鏈更清晰。邏輯會在綁定的按鈕被點擊時觸發。
+                </p>
+
+                <!-- .when() -->
+                <div id="when" class="bg-gray-50 p-6 rounded-lg shadow mb-6">
+                    <h4 class="api-item-heading">.when()</h4>
+                    <p class="text-gray-700 mb-2">開始一個條件判斷。</p>
+                    <p class="font-bold text-gray-800 mb-2">語法:</p>
+                    <pre class="code-block">.when(欄位名稱, 運算子, 值)</pre>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">參數規則:</p>
+                    <table class="param-table w-full text-left table-auto border-collapse border border-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">參數</th>
+                                <th class="w-1/4">類型</th>
+                                <th class="w-1/2">說明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>欄位名稱</code></td>
+                                <td>String</td>
+                                <td>必要參數，要判斷的輸入欄位名稱。</td>
+                            </tr>
+                            <tr>
+                                <td><code>運算子</code></td>
+                                <td>String</td>
+                                <td>必要參數，支援 <code>'=='</code>, <code>'!='</code>, <code>'&gt;'</code>, <code>'&lt;'</code>, <code>'&gt;='</code>, <code>'&lt;='</code>, <code>'includes'</code>, <code>'empty'</code>。</td>
+                            </tr>
+                            <tr>
+                                <td><code>值</code></td>
+                                <td>Any</td>
+                                <td>必要參數，用於比較的值。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">使用範例:</p>
+                    <pre class="code-block">new Cosmos.App()
+    .input('年齡').numeric('請輸入數字')
+    .button('提交')
+    .when('年齡', '>=', 18).then('您是成年人')
+    .start();</pre>
+                </div>
+
+                <!-- .and() -->
+                <div id="and" class="bg-gray-50 p-6 rounded-lg shadow mb-6">
+                    <h4 class="api-item-heading">.and()</h4>
+                    <p class="text-gray-700 mb-2">附加一個「且」條件到前一個 <code>.when()</code> 或 <code>.and()</code> 判斷。</p>
+                    <p class="font-bold text-gray-800 mb-2">語法:</p>
+                    <pre class="code-block">.and(欄位名稱, 運算子, 值)</pre>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">參數規則:</p>
+                    <table class="param-table w-full text-left table-auto border-collapse border border-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">參數</th>
+                                <th class="w-1/4">類型</th>
+                                <th class="w-1/2">說明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>欄位名稱</code></td>
+                                <td>String</td>
+                                <td>必要參數，要判斷的輸入欄位名稱。</td>
+                            </tr>
+                            <tr>
+                                <td><code>運算子</code></td>
+                                <td>String</td>
+                                <td>必要參數，支援的運算子與 <code>.when()</code> 相同。</td>
+                            </tr>
+                            <tr>
+                                <td><code>值</code></td>
+                                <td>Any</td>
+                                <td>必要參數，用於比較的值。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">使用範例:</p>
+                    <pre class="code-block">new Cosmos.App()
+    .input('分數')
+    .button('檢查')
+    .when('分數', '>=', 60).and('分數', '<=', 100).then('及格')
+    .start();</pre>
+                </div>
+
+                <!-- .or() -->
+                <div id="or" class="bg-gray-50 p-6 rounded-lg shadow mb-6">
+                    <h4 class="api-item-heading">.or()</h4>
+                    <p class="text-gray-700 mb-2">附加一個「或」條件到前一個 <code>.when()</code> 或 <code>.and()</code> 判斷。</p>
+                    <p class="font-bold text-gray-800 mb-2">語法:</p>
+                    <pre class="code-block">.or(欄位名稱, 運算子, 值)</pre>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">參數規則:</p>
+                    <table class="param-table w-full text-left table-auto border-collapse border border-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">參數</th>
+                                <th class="w-1/4">類型</th>
+                                <th class="w-1/2">說明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>欄位名稱</code></td>
+                                <td>String</td>
+                                <td>必要參數，要判斷的輸入欄位名稱。</td>
+                            </tr>
+                            <tr>
+                                <td><code>運算子</code></td>
+                                <td>String</td>
+                                <td>必要參數，支援的運算子與 <code>.when()</code> 相同。</td>
+                            </tr>
+                            <tr>
+                                <td><code>值</code></td>
+                                <td>Any</td>
+                                <td>必要參數，用於比較的值。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">使用範例:</p>
+                    <pre class="code-block">new Cosmos.App()
+    .input('偏好顏色')
+    .button('判斷')
+    .when('偏好顏色', '==', '紅').or('偏好顏色', '==', '藍').then('您喜歡原色')
+    .start();</pre>
+                </div>
+
+                <!-- .then() -->
+                <div id="then" class="bg-gray-50 p-6 rounded-lg shadow mb-6">
+                    <h4 class="api-item-heading">.then()</h4>
+                    <p class="text-gray-700 mb-2">當前一個條件判斷成立時執行的動作。</p>
+                    <p class="font-bold text-gray-800 mb-2">語法:</p>
+                    <pre class="code-block">.then(action)</pre>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">參數規則:</p>
+                    <table class="param-table w-full text-left table-auto border-collapse border border-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">參數</th>
+                                <th class="w-1/4">類型</th>
+                                <th class="w-1/2">說明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>action</code></td>
+                                <td>String | Function</td>
+                                <td>必要參數，可以是訊息字串或函式。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">使用範例:</p>
+                    <pre class="code-block">new Cosmos.App()
+    .input('年齡').numeric('請輸入數字')
+    .button('提交')
+    .when('年齡', '>=', 18).then('您是成年人')
+    .start();</pre>
+                </div>
+
+                <!-- .else() -->
+                <div id="else" class="bg-gray-50 p-6 rounded-lg shadow mb-6">
+                    <h4 class="api-item-heading">.else()</h4>
+                    <p class="text-gray-700 mb-2">當前一個 <code>.when()</code> 條件不成立時執行的動作。</p>
+                    <p class="font-bold text-gray-800 mb-2">語法:</p>
+                    <pre class="code-block">.else(action)</pre>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">參數規則:</p>
+                    <table class="param-table w-full text-left table-auto border-collapse border border-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">參數</th>
+                                <th class="w-1/4">類型</th>
+                                <th class="w-1/2">說明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>action</code></td>
+                                <td>String | Function</td>
+                                <td>必要參數，可以是訊息字串或函式。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">使用範例:</p>
+                    <pre class="code-block">new Cosmos.App()
+    .input('年齡').numeric('請輸入數字')
+    .button('提交')
+    .when('年齡', '>=', 18).then('您是成年人').else('您是未成年人')
+    .start();</pre>
+                </div>
+
+                <!-- .otherwise() -->
+                <div id="otherwise" class="bg-gray-50 p-6 rounded-lg shadow mb-6">
+                    <h4 class="api-item-heading">.otherwise()</h4>
+                    <p class="text-gray-700 mb-2">所有 <code>.when()</code> 條件都不成立時執行的動作。</p>
+                    <p class="font-bold text-gray-800 mb-2">語法:</p>
+                    <pre class="code-block">.otherwise(action)</pre>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">參數規則:</p>
+                    <table class="param-table w-full text-left table-auto border-collapse border border-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">參數</th>
+                                <th class="w-1/4">類型</th>
+                                <th class="w-1/2">說明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>action</code></td>
+                                <td>String | Function</td>
+                                <td>必要參數，可以是訊息字串或函式。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">使用範例:</p>
+                    <pre class="code-block">new Cosmos.App()
+    .input('年齡').numeric('請輸入數字')
+    .button('提交')
+    .when('年齡', '>=', 18).then('您是成年人')
+    .when('年齡', '<', 0).then('年齡不能為負數')
+    .otherwise('請輸入有效的年齡')
+    .start();</pre>
+                </div>
+            </div>
+
+            <!-- API 通訊積木 -->
+            <div id="api-communication" class="mb-16">
+                <h3 class="api-category-title">6. API 通訊積木</h3>
+                <p class="text-gray-700 mb-6">
+                    Cosmos 提供了完整的 API 通訊功能，讓您能夠輕鬆與後端服務進行互動。
+                </p>
+
+                <!-- .GET() -->
+                <div id="get" class="bg-gray-50 p-6 rounded-lg shadow mb-6">
+                    <h4 class="api-item-heading">.GET()</h4>
+                    <p class="text-gray-700 mb-2">發送 GET 請求到指定 URL，用於獲取資料。</p>
+                    <p class="font-bold text-gray-800 mb-2">語法:</p>
+                    <pre class="code-block">.GET(url)</pre>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">參數規則:</p>
+                    <table class="param-table w-full text-left table-auto border-collapse border border-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">參數</th>
+                                <th class="w-1/4">類型</th>
+                                <th class="w-1/2">說明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>url</code></td>
+                                <td>String</td>
+                                <td>必要參數，請求的目標 URL。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">使用範例:</p>
+                    <pre class="code-block">new Cosmos.App()
+    .GET('https://jsonplaceholder.typicode.com/users/1')
+    .onSuccess('歡迎 {name}！您來自 {address.city}')
+    .onError('載入失敗：{error}')
+    .start();</pre>
+                </div>
+
+                <!-- .POST() -->
+                <div id="post" class="bg-gray-50 p-6 rounded-lg shadow mb-6">
+                    <h4 class="api-item-heading">.POST()</h4>
+                    <p class="text-gray-700 mb-2">發送 POST 請求到指定 URL，用於創建新資料。如果不提供 <code>data</code> 參數，會自動收集表單資料。</p>
+                    <p class="font-bold text-gray-800 mb-2">語法:</p>
+                    <pre class="code-block">.POST(url, data?)</pre>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">參數規則:</p>
+                    <table class="param-table w-full text-left table-auto border-collapse border border-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">參數</th>
+                                <th class="w-1/4">類型</th>
+                                <th class="w-1/2">說明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>url</code></td>
+                                <td>String</td>
+                                <td>必要參數，請求的目標 URL。</td>
+                            </tr>
+                            <tr>
+                                <td><code>data</code></td>
+                                <td>Object | undefined</td>
+                                <td>可選參數，要發送的資料物件。如果省略，Cosmos 會自動收集當前容器中輸入元素的值。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">使用範例:</p>
+                    <pre class="code-block">// 自動收集表單資料
+Cosmos.create('form-app')
+    .input('請輸入標題')
+    .input('請輸入內容')
+    .button('發布')
+    .onClick(() => {
+        new Cosmos.App()
+            .POST('https://jsonplaceholder.typicode.com/posts')
+            .onSuccess('文章發布成功！ID: {id}')
+            .onError('發布失敗：{error}');
+    })
+    .start();
+
+// 手動提供資料
+new Cosmos.App()
+    .POST('https://api.example.com/users', {
+        name: '張三',
+        email: 'zhang@example.com'
+    })
+    .onSuccess('用戶 {name} 創建成功！')
+    .start();</pre>
+                </div>
+
+                <!-- .PUT() -->
+                <div id="put" class="bg-gray-50 p-6 rounded-lg shadow mb-6">
+                    <h4 class="api-item-heading">.PUT()</h4>
+                    <p class="text-gray-700 mb-2">發送 PUT 請求到指定 URL，用於更新現有資料。如果不提供 <code>data</code> 參數，會自動收集表單資料。</p>
+                    <p class="font-bold text-gray-800 mb-2">語法:</p>
+                    <pre class="code-block">.PUT(url, data?)</pre>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">參數規則:</p>
+                    <table class="param-table w-full text-left table-auto border-collapse border border-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">參數</th>
+                                <th class="w-1/4">類型</th>
+                                <th class="w-1/2">說明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>url</code></td>
+                                <td>String</td>
+                                <td>必要參數，請求的目標 URL。</td>
+                            </tr>
+                            <tr>
+                                <td><code>data</code></td>
+                                <td>Object | undefined</td>
+                                <td>可選參數，要發送的資料物件。如果省略，Cosmos 會自動收集當前容器中輸入元素的值。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">使用範例:</p>
+                    <pre class="code-block">new Cosmos.App()
+    .PUT('https://api.example.com/users/123', {
+        name: '新名稱',
+        email: 'new@example.com'
+    })
+    .onSuccess('用戶資料更新成功')
+    .onError('更新失敗：{error}')
+    .start();</pre>
+                </div>
+
+                <!-- .DELETE() -->
+                <div id="delete" class="bg-gray-50 p-6 rounded-lg shadow mb-6">
+                    <h4 class="api-item-heading">.DELETE()</h4>
+                    <p class="text-gray-700 mb-2">發送 DELETE 請求到指定 URL，用於刪除資料。</p>
+                    <p class="font-bold text-gray-800 mb-2">語法:</p>
+                    <pre class="code-block">.DELETE(url)</pre>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">參數規則:</p>
+                    <table class="param-table w-full text-left table-auto border-collapse border border-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">參數</th>
+                                <th class="w-1/4">類型</th>
+                                <th class="w-1/2">說明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>url</code></td>
+                                <td>String</td>
+                                <td>必要參數，請求的目標 URL。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">使用範例:</p>
+                    <pre class="code-block">new Cosmos.App()
+    .DELETE('https://api.example.com/users/123')
+    .onSuccess('用戶刪除成功')
+    .onError('刪除失敗：{error}')
+    .start();</pre>
+                </div>
+
+                <!-- .onSuccess() -->
+                <div id="onsuccess" class="bg-gray-50 p-6 rounded-lg shadow mb-6">
+                    <h4 class="api-item-heading">.onSuccess()</h4>
+                    <p class="text-gray-700 mb-2">定義成功回應的處理方式。支援字串模板、函數和目標元素格式。</p>
+                    <p class="font-bold text-gray-800 mb-2">語法:</p>
+                    <pre class="code-block">.onSuccess(handler)</pre>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">參數規則:</p>
+                    <table class="param-table w-full text-left table-auto border-collapse border border-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">參數</th>
+                                <th class="w-1/4">類型</th>
+                                <th class="w-1/2">說明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>handler</code></td>
+                                <td>String | Function | Object</td>
+                                <td>必要參數。可以是字串模板 (<code>'{key}'</code>), 接收資料的函數 (<code>(data) => {...}</code>), 或包含 <code>target</code> 和 <code>template</code> 的物件 (<code>{ target: 'id', template: '...' }</code>)。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">使用範例:</p>
+                    <pre class="code-block">// 字串模板格式
+.onSuccess('歡迎 {name}！您的郵箱是 {email}')
+
+// 函數格式
+.onSuccess((data) => {
+    console.log('收到資料：', data);
+    // ... 複雜邏輯
+})
+
+// 目標元素格式
+.onSuccess({
+    target: 'result-div',
+    template: '載入完成！用戶：{name}'
+})</pre>
+                </div>
+
+                <!-- .onError() -->
+                <div id="onerror" class="bg-gray-50 p-6 rounded-lg shadow mb-6">
+                    <h4 class="api-item-heading">.onError()</h4>
+                    <p class="text-gray-700 mb-2">定義錯誤回應的處理方式。支援字串模板、函數和目標元素格式。</p>
+                    <p class="font-bold text-gray-800 mb-2">語法:</p>
+                    <pre class="code-block">.onError(handler)</pre>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">參數規則:</p>
+                    <table class="param-table w-full text-left table-auto border-collapse border border-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">參數</th>
+                                <th class="w-1/4">類型</th>
+                                <th class="w-1/2">說明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>handler</code></td>
+                                <td>String | Function | Object</td>
+                                <td>必要參數。可以是字串模板 (<code>'{error}'</code>), 接收錯誤的函數 (<code>(error) => {...}</code>), 或包含 <code>target</code> 和 <code>template</code> 的物件。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">使用範例:</p>
+                    <pre class="code-block">// 字串模板格式
+.onError('請求失敗：{error}')
+
+// 函數格式
+.onError((error) => {
+    console.error('API 錯誤：', error);
+    // ... 複雜錯誤處理
+})</pre>
+                </div>
+
+                <!-- .onLoading() -->
+                <div id="onloading" class="bg-gray-50 p-6 rounded-lg shadow mb-6">
+                    <h4 class="api-item-heading">.onLoading()</h4>
+                    <p class="text-gray-700 mb-2">定義載入狀態的處理方式，在 API 請求開始時觸發。</p>
+                    <p class="font-bold text-gray-800 mb-2">語法:</p>
+                    <pre class="code-block">.onLoading(handler)</pre>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">參數規則:</p>
+                    <table class="param-table w-full text-left table-auto border-collapse border border-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">參數</th>
+                                <th class="w-1/4">類型</th>
+                                <th class="w-1/2">說明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>handler</code></td>
+                                <td>String | Function</td>
+                                <td>必要參數。可以是訊息字串，或在載入時執行的函數。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="font-bold text-gray-800 mt-4 mb-2">使用範例:</p>
+                    <pre class="code-block">// 字串格式
+.onLoading('正在載入資料，請稍候...')
+
+// 函數格式
+.onLoading(() => {
+    document.getElementById('spinner').style.display = 'block';
+})</pre>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 頁腳 (重複自 index.html，確保獨立頁面完整性) -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-4 text-center">
+            <p class="mb-4 text-lg">🌌 Cosmos Framework - 讓編程充滿詩意</p>
+            <div class="space-x-6 mb-4">
+                <a href="https://github.com/cosmos-framework/cosmos" target="_blank" class="text-gray-300 hover:text-white transition-colors duration-200">GitHub</a>
+                <a href="api-docs.html" target="_blank" class="text-gray-300 hover:text-white transition-colors duration-200">API 文檔</a>
+                <a href="index.html#examples" class="text-gray-300 hover:text-white transition-colors duration-200">範例</a>
+            </div>
+            <p class="text-sm text-gray-500">© 2024 Cosmos Framework. 用 ❤️ 和 ☕ 製作</p>
+        </div>
+    </footer>
+</body>
+</html>
