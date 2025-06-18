@@ -138,41 +138,60 @@ class CosmosApp {
      * @param {string} [alt] - The alternative text for the image.
      * @returns {CosmosApp} The CosmosApp instance for chaining.
      */
-    image(src, widthOrAlt, height, alt) {
+    // --- Image Element with Flexible Sizing ---
+    /**
+     * Adds an image element to the application with flexible sizing options.
+     * @param {string} src - The image URL or path (required).
+     * @param {number} [width] - The width in pixels (optional).
+     * @param {number|string} [height] - The height in pixels or 'auto' for responsive (optional).
+     * @param {string} [alt] - The alt text for accessibility (optional).
+     * @returns {CosmosApp} The CosmosApp instance for chaining.
+     */
+    image(src, width, height, alt) {
+        // Validate required src parameter
+        if (!src || typeof src !== 'string') {
+            throw new TypeError('Image src parameter is required and must be a string');
+        }
+
         let imageConfig = {
             type: 'image',
             src: src,
             color: this.currentColor,
-            animation: null
+            animation: null,
+            alt: alt || ''
         };
         
-        // Smart parameter parsing for width, height, and alt text
-        if (typeof widthOrAlt === 'string' && !height && !alt) {
-            imageConfig.alt = widthOrAlt || 'Image';
-            imageConfig.width = 'auto'; // Default width
+        // Handle width and height parameters
+        if (width === undefined && height === undefined) {
+            // No dimensions specified - use original image size
+            imageConfig.width = 'auto';
             imageConfig.height = 'auto';
-        } else if (typeof widthOrAlt === 'number' || (typeof widthOrAlt === 'string' && (widthOrAlt.includes('px') || widthOrAlt.includes('%')))) {
-            // widthOrAlt is a width. Now determine 'height' and 'alt'.
-            imageConfig.width = widthOrAlt;
-            if (typeof height === 'string' && alt === undefined &&
-                (isNaN(parseFloat(height)) && !height.includes('px') && !height.includes('%'))) {
-                // If 'height' param is a string not representing a dimension, and 'alt' is not given,
-                // assume 'height' param was intended as alt text.
-                imageConfig.alt = height;
-                imageConfig.height = 'auto'; // Default height
-            } else {
-                imageConfig.height = height || 'auto';
-                imageConfig.alt = alt || 'Image';
+        } else if (width !== undefined && height === undefined) {
+            // Only width specified - throw error as per requirement
+            throw new TypeError('If width is specified, height parameter must also be provided (can be a number or "auto")');
+        } else if (width !== undefined && height !== undefined) {
+            // Both width and height specified
+            if (typeof width !== 'number' || width <= 0) {
+                throw new TypeError('Width must be a positive number');
             }
-        } else {
-            imageConfig.alt = 'Image'; // Default alt text
-            imageConfig.width = 'auto'; // Default width
-            imageConfig.height = 'auto';
+            
+            if (height === 'auto') {
+                // Responsive height
+                imageConfig.width = width + 'px';
+                imageConfig.height = 'auto';
+            } else if (typeof height === 'number' && height > 0) {
+                // Fixed dimensions
+                imageConfig.width = width + 'px';
+                imageConfig.height = height + 'px';
+            } else {
+                throw new TypeError('Height must be a positive number or "auto"');
+            }
         }
         
         this.elements.push(imageConfig);
         return this;
     }
+    // --- End Image Element ---
 
     /**
      * Adds a dropdown select element to the application.
@@ -1489,11 +1508,20 @@ class CosmosApp {
                 let imageStyle = 'border-radius:8px; object-fit:cover; display:block; ' + animationStyle;
                 
                 if (element.width === 'auto') {
+                    // Original size with responsive behavior
                     imageStyle += 'max-width:' + (this.currentLayout === 'row' ? '200px' : '100%') + '; height:auto;';
                 } else {
+                    // Fixed or responsive dimensions with mobile-friendly constraints
                     let width = typeof element.width === 'number' ? element.width + 'px' : element.width;
                     let height = element.height === 'auto' ? 'auto' : (typeof element.height === 'number' ? element.height + 'px' : element.height);
-                    imageStyle += 'width:' + width + '; height:' + height + ';';
+                    
+                    // Add responsive behavior for fixed-size images
+                    imageStyle += 'width:' + width + '; height:' + height + '; max-width:100%; ';
+                    
+                    // If height is fixed, maintain aspect ratio on mobile
+                    if (element.height !== 'auto') {
+                        imageStyle += 'object-fit:contain; ';
+                    }
                 }
                 
                 elementsHTML += '<img src="' + element.src + '" alt="' + element.alt + '" style="' + imageStyle + '" onerror="this.style.background=\'#f0f0f0\'; this.style.color=\'#666\'; this.style.padding=\'20px\'; this.style.textAlign=\'center\'; this.innerHTML=\'Image failed to load: ' + element.alt + '\';">';
